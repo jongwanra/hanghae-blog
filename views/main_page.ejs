@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+        integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+        integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+        crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+        integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+        crossorigin="anonymous"></script>
+
+    <title>메인 페이지</title>
+
+    <style>
+        * {
+            font-family: "Apple SD Gothic Neo", "Nanum Barun Gothic", "Nanum Gothic", Verdana, Arial, "Malgun Gothic", Dotum, sans-serif;
+        }
+
+        .container {
+            width: 70%;
+            height: 700px;
+        }
+
+        .footer-box {
+            width: 100%;
+            height: 50px;
+            background-color: yellow;
+        }
+
+        .title {
+            display: incline;
+        }
+
+        .empty-box {
+            width: 100%;
+            height: 20px;
+        }
+
+        .card-box {
+            width: 100%;
+            height: 150px;
+            margin: 0 auto 20px auto;
+            background-color: white;
+            border-radius: 6px;
+            box-shadow: 0 0.5em 1em -0.125em rgb(10 10 10 / 10%), 0 0 0 1px rgb(10 10 10 / 2%);
+        }
+
+        .title-box {
+            padding-top: 10px;
+            width: 95%;
+            margin: auto;
+            height: 70%;
+            border-bottom: 1px solid #eaecef;
+            ;
+        }
+
+        .sub-box {
+            width: 95%;
+            margin: auto;
+            padding-top: 10px;
+            height: 20%;
+        }
+
+        .sub-content {
+            color: rgb(134, 142, 150)
+        }
+
+        a,
+        a:link {
+            color: black;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="wrap">
+        <!-- nav bar -->
+        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+            <div class="container-fluid">
+                <a class="navbar-brand" href="/">Jongwan's Blog</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                    aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav">
+                        <li class="nav-item">
+                            <a class="nav-link active" aria-current="page" href="/write">글 쓰기</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+        <div class="container">
+            <% for(let i=0; i< posts.length; i++){ %>
+                <div class="empty-box"></div>
+                <div class="card-box">
+                    <div class="title-box">
+                        <h2><a href="/detail/<%=posts[i].postID%>">
+                                <%=posts[i].postTitle %>
+                            </a>
+                        </h2>
+                    </div>
+                    <div class="sub-box">
+                        <span class="sub-content">작성일: <%=posts[i].postDate %> / </span>
+                        <span class="sub-content">작성자: <%=posts[i].postWriter %></span>
+                    </div>
+                </div>
+                <% } %>
+        </div>
+        <div class="empty-box"></div>
+    </div>
+</body>
+
+</html>

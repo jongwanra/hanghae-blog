@@ -1,0 +1,26 @@
+{
+  "name": "hanghae-blog",
+  "version": "1.0.0",
+  "description": "나만의 항해블로그를 요구사항에 맞춰서 만들어보기",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jongwanra/hanghae-blog.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/jongwanra/hanghae-blog/issues"
+  },
+  "homepage": "https://github.com/jongwanra/hanghae-blog#readme",
+  "dependencies": {
+    "ejs": "^3.1.6",
+    "express": "^4.17.1",
+    "mongoose": "^6.0.7",
+    "uuid": "^8.3.2"
+  }
+}

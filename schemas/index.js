@@ -1,8 +1,10 @@
 const mongoose = require('mongoose');
+require('dotenv').config();
 
+const database = process.env.database;
 const connect = () => {
   mongoose
-    .connect(`mongodb://localhost:27017/hanghae-blog`, {
+    .connect(`mongodb://localhost:27017/${database}`, {
       useNewUrlParser: true,
       useUnifiedTopology: true,
       ignoreUndefined: true,

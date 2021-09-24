@@ -1,11 +1,12 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const app = express();
-const port = 5000;
 const path = require('path');
+require('dotenv').config();
 //mongo db connect
 const connect = require('./schemas');
 const Post = require('./schemas/post_info');
+const PORT = process.env.PORT;
 connect();
 
 app.use(express.urlencoded({ extended: false }));
@@ -20,17 +21,14 @@ app.set('views', __dirname + '/views');
 app.set('view engine', 'ejs');
 
 // 전체 게시글 목록 조회 페이지(메인 페이지)로 이동하기
-app.get('/', (req, res) => {
-  Post.find((err, posts) => {
-    if (err) return res.status(500).send({ error: `database failuere` });
-    console.log(posts);
-    try {
-      res.render('main_page', { posts });
-    } catch (error) {
-      console.log(error);
-      res.render('main_page');
-    }
-  });
+app.get('/', async (req, res) => {
+  // 작성순으로 내림차순 정렬
+  try {
+    const posts = await Post.find({}).sort({ _id: -1 });
+    res.render('main_page', { posts });
+  } catch (err) {
+    console.log(err);
+  }
 });
 
 // 게시글 작성 페이지로 이동하기
@@ -47,11 +45,13 @@ app.get('/detail/:postID', async (req, res) => {
 });
 
 // 게시글 수정 페이지로 이동하기
-app.get('/modify', (req, res) => {
-  res.render('modify_page');
+app.get('/modify/:postID', async (req, res) => {
+  const { postID } = req.params;
+  const detailPost = await Post.find({ postID: postID }, { _id: false });
+  res.render('modify_page', { detailPost });
 });
 
 // 해당포트로 서버와 연결하기
-app.listen(port, () => {
-  console.log(`listening at http://localhost:${port}`);
+app.listen(PORT, () => {
+  console.log(`listening at http://localhost:${PORT}`);
 });

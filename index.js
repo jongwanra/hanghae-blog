@@ -3,11 +3,18 @@ const mongoose = require('mongoose');
 const app = express();
 const path = require('path');
 require('dotenv').config();
+
 //mongo db connect
-const connect = require('./schemas');
+try {
+  mongoose.connect(
+    'mongodb://test:test@13.125.89.15:27017/hanghae-blog?authSource=admin'
+  );
+} catch (error) {
+  console.log('mongo connect error : ', error);
+}
+
 const Post = require('./schemas/post_info');
 const PORT = process.env.PORT;
-connect();
 
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
@@ -37,7 +44,6 @@ app.get('/write', (req, res) => {
 });
 
 // 게시글 조회 페이지로 이동하기
-// async 와 await를 빼면 안받아진다 왜일까 ?
 app.get('/detail/:postID', async (req, res) => {
   const { postID } = req.params;
   const detailPost = await Post.find({ postID: postID }, { _id: false });

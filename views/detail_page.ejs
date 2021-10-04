@@ -152,10 +152,133 @@
         .comment-content {
             word-break: keep-all;
         }
+
+        .edit-btn,
+        .delete-btn {
+            color: gray;
+        }
+
+        .edit-btn:link,
+        .delete-btn:link {
+            color: gray;
+        }
+
+        .edit-btn:hover,
+        .delete-btn:hover {
+            color: gray;
+        }
+
+        .edit-delete-box {
+            padding-right: 2%;
+            float: right;
+        }
+
+        .edit-mode-area {
+            resize: none;
+            /*padding: 1rem 1rem 1.5rem;*/
+            outline: none;
+            border: 1px solid rgb(233, 236, 239);
+            margin-bottom: 1.2rem;
+            width: 100%;
+            border-radius: 4px;
+            min-height: 6.125rem;
+            color: rgb(33, 37, 41);
+            line-height: 1.75;
+
+        }
+
+        .toggle-box {
+            width: 100%;
+            height: 50px;
+            margin-bottom: 3%;
+            text-align: right;
+        }
     </style>
     <script>
-        function writeComment() {
-            alert("댓글 작성하기");
+
+        // 댓글 추가 요청
+        function writeComment(postID) {
+            // 작성한 댓글 가져오기
+            const commentContent = $("#write-comment-area").val();
+
+            $.ajax({
+                type: "post",
+                url: `/api/comment/${postID}`,
+                data: {
+                    commentContent: commentContent,
+                },
+                success: function (response) {
+                    // 성공시 해당 상세 페이지로 이동
+                    alert(response['message']);
+                    location.href = `/detail/${postID}`;
+                }
+            });
+        }
+        // '편집'을 누를 시, 수정 가능한 태그로 변경
+        function changeModifiableMode(idx) {
+            // comment 내용 편집가능하도록 태그 변경
+            const content = $(`#comment-content${idx}`).text().trim();
+            $(`#comment-content${idx}`).contents().unwrap().wrap(`<textarea id="edit-mode-area${idx}" class="edit-mode-area" placeholder="댓글을 작성하세요." type="text" spellcheck="false"></textarea>`);
+            $(`#edit-mode-area${idx}`).text(content);
+
+            // 편집, 삭제 버튼 숨기기
+            $(`#edit-btn${idx}`).hide();
+            $(`#delete-btn${idx}`).hide();
+
+            // 수정 버튼 나타내기
+            $(`#toggle-box${idx}`).show();
+        }
+
+        function changeOriginMode(idx) {
+            const content = $(`#edit-mode-area${idx}`).val();
+            $(`#edit-mode-area${idx}`).contents().unwrap().wrap(`<p id="comment-content${idx}" class="comment-content"></p>`);
+            $(`#comment-content${idx}`).text(content);
+
+            $(`#toggle-box${idx}`).hide();
+
+            // 편집, 삭제 버튼 드러내기
+            $(`#edit-btn${idx}`).show();
+            $(`#delete-btn${idx}`).show();
+
+
+        }
+        // 댓글 편집 요청
+        function editComment(postID, commentID) {
+            //변경 할 댓글 내용
+            //const commentContent = 
+            $.ajax({
+                type: "put",
+                url: `/api/comment/${postID}/${commentID}`,
+                data: {
+                    commentContent: commentContent,
+                },
+                success: function (response) {
+                    // 성공시 해당 상세 페이지로 이동
+                    alert(response['message']);
+                    location.href = `/detail/${postID}`;
+                }
+            });
+        }
+
+        // 댓글 삭제 요청
+        function deleteComment(postID, commentID) {
+            // 정말 삭제할지 재차 확인
+            const checkOneMore = window.confirm("정말 삭제하시겠습니까?");
+            if (!checkOneMore) {
+                return;
+            }
+
+            $.ajax({
+                type: "delete",
+                url: `/api/comment/${postID}/${commentID}`,
+                data: {
+                },
+                success: function (response) {
+                    // 성공시 해당 상세 페이지로 이동
+                    alert(response['message']);
+                    location.href = `/detail/${postID}`;
+                }
+            });
         }
     </script>
 </head>
@@ -194,144 +317,51 @@
             <div class="save-box">
                 <span>작성자: <input id="writer-input" value="<%=detailPost[0].postWriter %>" type="text" disabled></span>
             </div>
-            <div class="comment-write-box"><textarea placeholder="댓글을 작성해 주세요." spellcheck="false" type="text"
+            <div class="comment-write-box"><textarea placeholder="댓글을 작성해주세요." spellcheck="false" type="text"
                     id="write-comment-area"></textarea></div>
             <div class="save-box">
-                <button id="save-btn" onclick="writeComment()" type="button" class="btn btn-success save-btn">댓글
+                <button id="save-btn" onclick="writeComment('<%= detailPost[0].postID %>')" type="button"
+                    class="btn btn-success save-btn">댓글
                     작성</button>
             </div>
             <div id="comment-list-box">
                 <!-- 댓글 리스트  -->
-                <div class="comment-wrap">
-                    <p><b>작성자아아아</b> / <span>날짜아앙아</span></p>
-                    <div class="comment-box">
-                        <p class="comment-content">
-                            Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has
-                            been
-                            the industry's standard dummy text ever since the 1500s, when an unknown printer took a
-                            galley
-                            of type and scrambled it to make a type specimen book. It has survived not only five
-                            centuries,
-                            but also the leap into electronic typesetting, remaining essentially unchanged. It was
-                            popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum
-                            passages,
-                            and more recently with desktop publishing software like Aldus PageMaker including versions
-                            of
-                            Lorem Ipsum
-
-                            Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has
-                            been
-                            the industry's standard dummy text ever since the 1500s, when an unknown printer took a
-                            galley
-                            of type and scrambled it to make a type specimen book. It has survived not only five
-                            centuries,
-                            but also the leap into electronic typesetting, remaining essentially unchanged. It was
-                            popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum
-                            passages,
-                            and more recently with desktop publishing software like Aldus PageMaker including versions
-                            of
-                            Lorem Ipsum
-
-                            Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has
-                            been
-                            the industry's standard dummy text ever since the 1500s, when an unknown printer took a
-                            galley
-                            of type and scrambled it to make a type specimen book. It has survived not only five
-                            centuries,
-                            but also the leap into electronic typesetting, remaining essentially unchanged. It was
-                            popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum
-                            passages,
-                            and more recently with desktop publishing software like Aldus PageMaker including versions
-                            of
-                            Lorem Ipsum
+                <% for(let i=0; i< detailComment.length; i++){ %>
+                    <div class="comment-wrap">
+                        <p><b>
+                                <%= detailComment[i].commentWriter %>
+                            </b> / <span>
+                                <%= detailComment[i].commentDate %>
+                            </span>
+                            <span class="edit-delete-box"><a href=""
+                                    onclick="changeModifiableMode(<%=i%>); return false;" id="edit-btn<%=i%>"
+                                    class="edit-btn">편집</a>
+                                <a href=""
+                                    onclick="deleteComment('<%=detailComment[i].postID%>', '<%= detailComment[i].commentID%>'); return false;"
+                                    id="delete-btn<%=i%>" class="delete-btn">삭제</a></span>
                         </p>
+                        <div class="comment-box">
+                            <p id="comment-content<%=i%>" class="comment-content">
+                                <%=detailComment[i].commentContent %>
+                            </p>
+                        </div>
+                        <div id="toggle-box<%=i%>" class="toggle-box" style="display:none">
+                            <button id="cancel-btn" onclick="changeOriginMode(<%=i%>)" type="button"
+                                class="btn btn-failure">취소
+                            </button>
+                            <button id="edit-btn" onclick="writeComment('<%= detailPost[0].postID %>')" type="button"
+                                class="btn btn-success" style="margin-left: 5px">댓글 수정
+                            </button>
+                        </div>
                     </div>
-                </div>
-                <div class="comment-wrap">
-                    <p><b>작성자아아아</b> / <span>날짜아앙아</span></p>
-                    <div class="comment-box">
-                        <p class="comment-content">
-                            Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has
-                            been
-                            the industry's standard dummy text ever since the 1500s, when an unknown printer took a
-                            galley
-                            of type and scrambled it to make a type specimen book. It has survived not only five
-                            centuries,
-                            but also the leap into electronic typesetting, remaining essentially unchanged. It was
-                            popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum
-                            passages,
-                            and more recently with desktop publishing software like Aldus PageMaker including versions
-                            of
-                            Lorem Ipsum
-
-
-                            Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has
-                            been
-                            the industry's standard dummy text ever since the 1500s, when an unknown printer took a
-                            galley
-                            of type and scrambled it to make a type specimen book. It has survived not only five
-                            centuries,
-                            but also the leap into electronic typesetting, remaining essentially unchanged. It was
-                            popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum
-                            passages,
-                            and more recently with desktop publishing software like Aldus PageMaker including versions
-                            of
-                            Lorem Ipsum
-                        </p>
-                    </div>
-                </div>
-                <div class="comment-wrap">
-                    <p><b>작성자아아아</b> / <span>날짜아앙아</span></p>
-                    <div class="comment-box">
-                        <p class="comment-content">
-                            Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has
-                            been
-                            the industry's standard dummy text ever since the 1500s, when an unknown printer took a
-                            galley
-                            of type and scrambled it to make a type specimen book. It has survived not only five
-                            centuries,
-                            but also the leap into electronic typesetting, remaining essentially unchanged. It was
-                            popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum
-                            passages,
-                            and more recently with desktop publishing software like Aldus PageMaker including versions
-                            of
-                            Lorem Ipsum
-
-                            Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has
-                            been
-                            the industry's standard dummy text ever since the 1500s, when an unknown printer took a
-                            galley
-                            of type and scrambled it to make a type specimen book. It has survived not only five
-                            centuries,
-                            but also the leap into electronic typesetting, remaining essentially unchanged. It was
-                            popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum
-                            passages,
-                            and more recently with desktop publishing software like Aldus PageMaker including versions
-                            of
-                            Lorem Ipsum
-
-                            Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has
-                            been
-                            the industry's standard dummy text ever since the 1500s, when an unknown printer took a
-                            galley
-                            of type and scrambled it to make a type specimen book. It has survived not only five
-                            centuries,
-                            but also the leap into electronic typesetting, remaining essentially unchanged. It was
-                            popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum
-                            passages,
-                            and more recently with desktop publishing software like Aldus PageMaker including versions
-                            of
-                            Lorem Ipsum
-                        </p>
-                    </div>
-                </div>
+                    <% } %>
             </div>
-        </div>
 
-        <div class="empty-box"></div>
-        <div class="empty-box"></div>
-        <div class="empty-box"></div>
-        <div class="empty-box"></div>
+            <div class="empty-box"></div>
+            <div class="empty-box"></div>
+            <div class="empty-box"></div>
+            <div class="empty-box"></div>
+        </div>
     </div>
 </body>
 

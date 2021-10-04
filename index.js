@@ -14,6 +14,8 @@ try {
 }
 
 const Post = require('./schemas/post_info');
+const Comment = require('./schemas/comment_info');
+
 const PORT = process.env.PORT;
 
 app.use(express.urlencoded({ extended: false }));
@@ -22,6 +24,9 @@ app.use(express.static('public'));
 
 const postRouter = require('./routers/post');
 app.use('/api/post', [postRouter]);
+
+const commentRouter = require('./routers/comment');
+app.use('/api/comment', [commentRouter]);
 
 // view path와 확장자는 ejs로 설정
 app.set('views', __dirname + '/views');
@@ -46,8 +51,17 @@ app.get('/write', (req, res) => {
 // 게시글 조회 페이지로 이동하기
 app.get('/detail/:postID', async (req, res) => {
   const { postID } = req.params;
+
+  // 해당 포스트 내용 가져오기
   const detailPost = await Post.find({ postID: postID }, { _id: false });
-  res.render('detail_page', { detailPost });
+
+  // 포스트에 해당하는 댓글들 가져오기.
+  const detailComment = await Comment.find(
+    { postID: postID },
+    { _id: false }
+  ).sort({ commentID: -1 });
+
+  res.render('detail_page', { detailPost, detailComment });
 });
 
 // 게시글 수정 페이지로 이동하기
@@ -61,3 +75,11 @@ app.get('/modify/:postID', async (req, res) => {
 app.listen(PORT, () => {
   console.log(`listening at http://localhost:${PORT}`);
 });
+
+/*
+
+각자 두곳에서 socket file
+app.js 에서 io 선언한 부분을 지워서 확인해보자
+app.js에 있는 ㄷ텍ㄷㄴㄴfmf express 바인딩이 두번되고 있다.
+
+*/

@@ -12,6 +12,7 @@ const commentSchema = new Schema({
     required: true,
     unique: true,
   },
+
   commentContent: {
     type: String,
     required: true,
@@ -20,7 +21,7 @@ const commentSchema = new Schema({
   commentWriter: {
     type: String,
     required: true,
-    unique: false,
+    unique: true,
   },
 
   commentDate: {

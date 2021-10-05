@@ -8,47 +8,53 @@ const SECRET_KEY = process.env.SECRET_KEY;
 
 // user 생성
 router.post('/register', async (req, res) => {
-  const { userNickname, userEmail, userPassword } = req.body;
+  const { userNickname, userPassword } = req.body;
 
-  const existUsers = await User.find({
-    $or: [{ userNickname: userNickname }, { userEmail: userEmail }],
-  });
+  const existUsers = await User.find(
+    { userNickname: userNickname },
+    { _id: false }
+  );
 
-  if (existUsers.length) {
-    res.status(400).send({
-      errorMessage: '이미 가입된 이메일 또는 닉네임이 있습니다.',
+  if (existUsers.length >= 1) {
+    return res.status(400).send({
+      errorMessage: '중복된 닉네임입니다.',
     });
-    return;
   }
 
   const userID = uuid.v1();
-  await User.create({ userID, userEmail, userNickname, userPassword });
+  await User.create({ userID, userNickname, userPassword });
 
   res.status(201).send({});
 });
 
 // 로그인
 router.post('/auth', async (req, res) => {
-  const { userEmail, userPassword } = req.body;
+  const { userNickname, userPassword } = req.body;
 
   const user = await User.find(
-    { userEmail: userEmail, userPassword: userPassword },
+    { userNickname: userNickname, userPassword: userPassword },
     { _id: false }
   );
 
-  console.log(user);
-
-  if (!user) {
-    res.status(400).send({
-      errorMessage: '이메일 또는 패스워드가 잘못됐습니다.',
+  if (user.length === 0) {
+    return res.status(400).send({
+      errorMessage: '닉네임 또는 패스워드를 확인해주세요.',
     });
-    return;
   }
 
-  const token = jwt.sign({ userID: user.userID }, SECRET_KEY);
+  const token = jwt.sign({ userID: user[0].userID }, SECRET_KEY);
+
+  // cookie 저장
+  res.cookie('user', token);
   res.status(200).send({
-    token,
+    message: '로그인에 성공하였습니다.',
   });
+});
+
+// 로그아웃
+router.get('/logout', (req, res) => {
+  res.clearCookie('user');
+  res.status(200).redirect('/');
 });
 
 module.exports = router;

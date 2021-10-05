@@ -214,9 +214,15 @@
                     commentContent: commentContent,
                 },
                 success: function (response) {
+                    console.log("success");
                     // 성공시 해당 상세 페이지로 이동
                     alert(response['message']);
                     location.href = `/detail/${postID}`;
+                },
+                error: function (error) {
+                    console.log("error");
+                    alert(error.responseJSON.errorMessage);
+                    window.location.href = "/login";
                 }
             });
         }
@@ -348,12 +354,14 @@
                             </b> / <span>
                                 <%= detailComment[i].commentDate %>
                             </span>
-                            <span class="edit-delete-box"><a href=""
-                                    onclick="changeModifiableMode(<%=i%>); return false;" id="edit-btn<%=i%>"
-                                    class="edit-btn">편집</a>
-                                <a href=""
-                                    onclick="deleteComment('<%=detailComment[i].postID%>', '<%= detailComment[i].commentID%>'); return false;"
-                                    id="delete-btn<%=i%>" class="delete-btn">삭제</a></span>
+                            <%if(detailComment[i].commentWriter===userNickname) { %>
+                                <span class="edit-delete-box"><a href=""
+                                        onclick="changeModifiableMode(<%=i%>); return false;" id="edit-btn<%=i%>"
+                                        class="edit-btn">편집</a>
+                                    <a href=""
+                                        onclick="deleteComment('<%=detailComment[i].postID%>', '<%= detailComment[i].commentID%>'); return false;"
+                                        id="delete-btn<%=i%>" class="delete-btn">삭제</a></span>
+                                <% }%>
                         </p>
                         <div class="comment-box">
                             <p id="comment-content<%=i%>" class="comment-content">

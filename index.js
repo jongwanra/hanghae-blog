@@ -1,7 +1,11 @@
 const express = require('express');
+const cookieParser = require('cookie-parser');
 const mongoose = require('mongoose');
 const app = express();
 const path = require('path');
+const authMiddleware = require('./middlewares/auth-middleware');
+const SECRET_KEY = process.env.SECRET_KEY;
+const jwt = require('jsonwebtoken');
 require('dotenv').config();
 
 //mongo db connect
@@ -19,6 +23,7 @@ const User = require('./schemas/user_info');
 
 const PORT = process.env.PORT;
 
+app.use(cookieParser());
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 app.use(express.static('public'));
@@ -47,8 +52,8 @@ app.get('/', async (req, res) => {
   }
 });
 
-// 게시글 작성 페이지로 이동하기
-app.get('/write', (req, res) => {
+app.get('/write', authMiddleware, (req, res) => {
+  console.log(res.locals.user);
   res.render('write_page');
 });
 
@@ -65,11 +70,38 @@ app.get('/detail/:postID', async (req, res) => {
     { _id: false }
   ).sort({ commentID: -1 });
 
-  res.render('detail_page', { detailPost, detailComment });
+  // 로그인한 유저 정보 가져오기
+  const token = req.cookies.user;
+
+  // 로그인 하지 않은 유저일 경우
+  if (!token) {
+    return res.render('detail_page', {
+      detailPost,
+      detailComment,
+      userNickname: undefined,
+    });
+  }
+  // 로그인 한 유저일 경우(로그인한 유저만 자기 자신의 댓글을 지울 수 있음.)
+  const { userID } = jwt.verify(token, SECRET_KEY);
+  try {
+    const user = await User.findOne({ userID: userID }, { _id: false });
+
+    return res.render('detail_page', {
+      detailPost,
+      detailComment,
+      userNickname: user.userNickname,
+    });
+  } catch (error) {
+    return res.render('detail_page', {
+      detailPost,
+      detailComment,
+      userNickname: undefined,
+    });
+  }
 });
 
 // 게시글 수정 페이지로 이동하기
-app.get('/modify/:postID', async (req, res) => {
+app.get('/modify/:postID', authMiddleware, async (req, res) => {
   const { postID } = req.params;
   const detailPost = await Post.find({ postID: postID }, { _id: false });
   res.render('modify_page', { detailPost });

@@ -40,8 +40,8 @@
             padding-top: 10px;
             width: 450px;
             min-width: 450px;
-            height: 600px;
-            min-height: 600px;
+            height: 500px;
+            min-height: 500px;
             background-color: white;
             margin: 0 auto;
             border-radius: 6px;
@@ -56,21 +56,19 @@
 
         .signup-wrap {
             width: 100%;
-            height: 80%;
+            height: 70%;
         }
 
         .signup-btn-box,
-        .email-box,
         .pwd-box,
         .pwd-confirm-box,
         .nickname-box {
             width: 100%;
-            height: 20%;
+            height: 28%;
 
         }
 
         .signup-btn,
-        .email-input,
         .nickname-input,
         .pwd-confirm-input,
         .pwd-input {
@@ -82,7 +80,6 @@
             padding-left: 10px;
         }
 
-        .email-input:focus,
         .nickname-input:focus,
         .pwd-input:focus,
         .pwd-confirm-input:focus {
@@ -94,13 +91,12 @@
 
         //회원 등록 버튼 클릭시 호출
         function registUser() {
-            const userEmail = $("#email-input").val();
             const userNickname = $("#nickname-input").val();
             const userPassword = $("#pwd-input").val();
             const userPasswordConfirm = $("#pwd-confirm-input").val();
 
             // 한개라도 비어있을 경우, 함수에서 내보내기
-            if (!checkEmptyInput(userEmail, userNickname, userPassword, userPasswordConfirm)) {
+            if (!checkEmptyInput(userNickname, userPassword, userPasswordConfirm)) {
                 return;
             }
             // 비밀번호가 일치하지 않는 경우 내보내기
@@ -108,31 +104,27 @@
                 return;
             }
 
-
             $.ajax({
                 type: "post",
                 url: `/api/user/register`,
                 data: {
-                    userEmail: userEmail,
                     userNickname: userNickname,
                     userPassword: userPassword,
                 },
                 success: function (response) {
                     alert('회원등록을 성공적으로 완료하였습니다.');
-                    window.location.replace("/"); //성공시 메인페이지로 경로이동
+                    window.location.href = "/login"; //성공시 로그인페이지로 경로이동
+                },
+                error: function (error) {
+                    alert(error.responseJSON.errorMessage);
+                    $("#nickname-input").focus();
                 }
             });
 
         }
 
         // 고객이 적지 않은 정보가 있는지 체크
-        function checkEmptyInput(userEmail, userNickname, userPassword, userPasswordConfirm) {
-            if (userEmail === "") {
-                alert("이메일을 입력해주세요.");
-                $("#email-input").focus();
-                return false;
-            }
-
+        function checkEmptyInput(userNickname, userPassword, userPasswordConfirm) {
             if (userNickname === "") {
                 alert("닉네임을 입력해주세요.");
                 $("#nickname-input").focus();
@@ -187,9 +179,6 @@
         <div class="container">
             <div class="title-box"></div>
             <div class="signup-wrap">
-                <div class="email-box">
-                    <input type="email" id="email-input" class="email-input" placeholder="이메일을 입력해주세요.">
-                </div>
                 <div class="nickname-box">
                     <input type="text" id="nickname-input" class="nickname-input" placeholder="닉네임을 입력해주세요.">
                 </div>

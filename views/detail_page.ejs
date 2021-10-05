@@ -201,6 +201,12 @@
             // 작성한 댓글 가져오기
             const commentContent = $("#write-comment-area").val();
 
+            if (commentContent === '') {
+                alert("댓글을 입력해주세요.");
+                $("#write-comment-area").focus();
+                return;
+            }
+
             $.ajax({
                 type: "post",
                 url: `/api/comment/${postID}`,
@@ -229,6 +235,7 @@
             $(`#toggle-box${idx}`).show();
         }
 
+        // '편집 상태'에서 -> 취소를 누를시 호출
         function changeOriginMode(idx) {
             const content = $(`#edit-mode-area${idx}`).val();
             $(`#edit-mode-area${idx}`).contents().unwrap().wrap(`<p id="comment-content${idx}" class="comment-content"></p>`);
@@ -243,11 +250,19 @@
 
         }
         // 댓글 편집 요청
-        function editComment(postID, commentID) {
+        function editComment(postID, commentID, idx) {
+
+
             //변경 할 댓글 내용
-            //const commentContent = 
+            const commentContent = $(`#edit-mode-area${idx}`).val();
+            if (commentContent === '') {
+                alert('댓글을 작성해주세요.');
+                $(`#edit-mode-area${idx}`).focus();
+                return;
+            }
+
             $.ajax({
-                type: "put",
+                type: "PUT",
                 url: `/api/comment/${postID}/${commentID}`,
                 data: {
                     commentContent: commentContent,
@@ -349,8 +364,9 @@
                             <button id="cancel-btn" onclick="changeOriginMode(<%=i%>)" type="button"
                                 class="btn btn-failure">취소
                             </button>
-                            <button id="edit-btn" onclick="writeComment('<%= detailPost[0].postID %>')" type="button"
-                                class="btn btn-success" style="margin-left: 5px">댓글 수정
+                            <button id="edit-btn"
+                                onclick="editComment('<%=detailComment[i].postID%>', '<%= detailComment[i].commentID%>', <%=i%>)"
+                                type="button" class="btn btn-success" style="margin-left: 5px">댓글 수정
                             </button>
                         </div>
                     </div>

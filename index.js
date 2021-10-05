@@ -15,6 +15,7 @@ try {
 
 const Post = require('./schemas/post_info');
 const Comment = require('./schemas/comment_info');
+const User = require('./schemas/user_info');
 
 const PORT = process.env.PORT;
 
@@ -27,6 +28,9 @@ app.use('/api/post', [postRouter]);
 
 const commentRouter = require('./routers/comment');
 app.use('/api/comment', [commentRouter]);
+
+const userRouter = require('./routers/user');
+app.use('/api/user', [userRouter]);
 
 // view path와 확장자는 ejs로 설정
 app.set('views', __dirname + '/views');
@@ -71,6 +75,15 @@ app.get('/modify/:postID', async (req, res) => {
   res.render('modify_page', { detailPost });
 });
 
+// 로그인 페이지로 이동하기
+app.get('/login', (req, res) => {
+  res.render('login_page');
+});
+
+// 회원가입 페이지로 이동하기
+app.get('/register', (req, res) => {
+  res.render('signup_page');
+});
 // 해당포트로 서버와 연결하기
 app.listen(PORT, () => {
   console.log(`listening at http://localhost:${PORT}`);

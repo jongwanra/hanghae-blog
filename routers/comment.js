@@ -15,7 +15,6 @@ router.post('/:postID', async (req, res) => {
     const commentWriter = 'anonymous';
     const commentDate = getCurrentTime();
 
-    console.log(postID, commentID, commentContent, commentWriter, commentDate);
     Comment.create({
       postID,
       commentID,
@@ -37,7 +36,6 @@ router.post('/:postID', async (req, res) => {
 // 댓글 수정하기
 router.put('/:postID/:commentID', async (req, res) => {
   try {
-    console.log('put comment!!');
     // 해당 포스트ID와 commentID값을 가져온다.
     const { postID, commentID } = req.params;
     // 바꿀 댓글 내용을 가져온다.

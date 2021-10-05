@@ -1,0 +1,175 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+        integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+        integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+        crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+        integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+        crossorigin="anonymous"></script>
+
+    <title>메인 페이지</title>
+
+    <style>
+        * {
+            font-family: "Apple SD Gothic Neo", "Nanum Barun Gothic", "Nanum Gothic", Verdana, Arial, "Malgun Gothic", Dotum, sans-serif;
+        }
+
+        .top-empty-box {
+            width: 450x;
+            min-width: 450px;
+            height: 100px;
+            min-height: 100px;
+            margin: 0 auto;
+        }
+
+
+        .container {
+            padding-top: 10px;
+            width: 450px;
+            min-width: 450px;
+            height: 400px;
+            min-height: 400px;
+            background-color: white;
+            margin: 0 auto;
+            border-radius: 6px;
+            box-shadow: 0 0.5em 1em -0.125em rgb(10 10 10 / 10%), 0 0 0 1px rgb(10 10 10 / 2%);
+        }
+
+        .title-box {
+            width: 100%;
+            height: 20%;
+            margin-bottom: 20px;
+        }
+
+        .login-wrap {
+            width: 100%;
+            height: 50%;
+        }
+
+        .login-btn-box,
+        .email-input-box,
+        .pwd-input-box {
+            width: 100%;
+            height: 50%;
+
+        }
+
+        .login-btn,
+        .email-input,
+        .pwd-input {
+            width: 100%;
+            height: 60%;
+            outline: none;
+            border: 1px solid #eaecef;
+            border-radius: 4px;
+            padding-left: 10px;
+        }
+
+        .email-input:focus,
+        .pwd-input:focus {
+            border-color: #28a745;
+
+        }
+    </style>
+
+    <script>
+        // 이미 로그인 상태인 경우
+        if (localStorage.getItem("token")) {
+            alert("이미 로그인이 되어있습니다. ");
+            window.location.replace("/");
+        };
+        // 로그인 버튼 클릭시 호출
+        function checkRightUser() {
+            const userEmail = $("#email-input").val();
+            const userPassword = $("#pwd-input").val();
+
+            // 이메일 입력이 비어있을 경우
+            if (userEmail === "") {
+                alert("이메일을 입력해주세요.");
+                $("#email-input").focus();
+                return;
+            }
+            // 비밀번호 입력이 비어있을 경우
+            if (userPassword === "") {
+                alert("비밀번호를 입력해주세요.");
+                $("#pwd-input").focus();
+                return;
+            }
+
+            $.ajax({
+                type: "post",
+                url: `/api/user/auth`,
+                data: {
+                    userEmail: userEmail,
+                    userPassword: userPassword,
+                },
+                success: function (response) {
+                    alert("로그인을 성공적으로 완료하였습니다.");
+                    // 로그인 성공시, localStorage에 발급받은 token을 저장한다.
+                    localStorage.setItem("token", response.token);
+                    window.location.replace("/"); // 성공시 메인페이지로 경로이동
+                },
+                error: function (error) {
+                    alert(error.responseJSON.errorMessage);
+
+                }
+            });
+
+        }
+    </script>
+</head>
+
+<body>
+    <div class="wrap">
+        <!-- nav bar -->
+        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+            <div class="container-fluid">
+                <a class="navbar-brand" href="/">Jongwan's Blog</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                    aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav">
+                        <li class="nav-item">
+                            <a class="nav-link active" aria-current="page" href="/">뒤로 가기</a>
+                        </li>
+                    </ul>
+                </div>
+
+            </div>
+        </nav>
+        <div class="top-empty-box"></div>
+        <div class="container">
+            <div class="title-box"></div>
+            <div class="login-wrap">
+                <div class="email-input-box">
+                    <input type="email" id="email-input" class="email-input" placeholder="이메일을 입력해주세요.">
+                </div>
+                <div class="pwd-input-box">
+                    <input type="password" id="pwd-input" class="pwd-input" placeholder="비밀번호를 입력해주세요.">
+                </div>
+                <div class="login-btn-box">
+                    <button id="login-btn" type="button" class="btn btn-success login-btn"
+                        onclick="checkRightUser()">로그인</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</body>
+
+</html>

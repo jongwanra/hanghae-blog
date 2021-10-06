@@ -74,8 +74,8 @@ input:focus,
 #writer-input {
   width: 70px;
   border: 0 solid black;
-  border-bottom: 1px solid #eaecef;
   background-color: white;
+  border-bottom: 1px solid #eaecef;
 }
 
 .comment-write-box {

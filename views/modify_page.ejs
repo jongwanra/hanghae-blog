@@ -24,14 +24,20 @@
 
 
     <script>
-        function deleteContent(postID) {
+        // 삭제하기 버튼 눌렀을 경우 호출
+        function deleteContent(postID, userPassword) {
             const postPassword = $('#password-input').val();
             // 비밀번호가 안 적혀있을 경우
             if (postPassword.length < 4) {
-                alert("비밀번호 4자리를 입력해주세요.");
+                alert("비밀번호를 입력해주세요.");
                 $('#password-input').focus();
                 return;
             }
+            // 비밀번호가 일치하지 않은 경우
+            if (!checkPasswords(postPassword, userPassword)) {
+                return;
+            }
+
             $.ajax({
                 type: "DELETE",
                 url: `/api/post/delete/${postID}`,
@@ -48,16 +54,21 @@
                 }
             })
         }
-
-        function modifyContent(postID) {
+        // 수정 완료 버튼을 눌렀을 경우 호출
+        function modifyContent(postID, userPassword) {
             const postTitle = $("#title-input").val();
             const postContent = $("#content-area").val();
             const postPassword = $("#password-input").val();
 
             // 비밀번호가 안 적혀있을 경우
             if (postPassword.length < 4) {
-                alert("비밀번호 4자리를 입력해주세요.");
+                alert("비밀번호를 입력해주세요.");
                 $('#password-input').focus();
+                return;
+            }
+
+            // 비밀번호가 일치하지 않은 경우
+            if (!checkPasswords(postPassword, userPassword)) {
                 return;
             }
 
@@ -78,6 +89,17 @@
                     }
                 }
             })
+        }
+
+        // 비밀번호가 일치하지 않은 경우
+        function checkPasswords(postPassword, userPassword) {
+            if (postPassword != userPassword) {
+                alert("비밀번호가 일치하지 않습니다.");
+                alert(postPassword, userPassword);
+                $('#password-input').focus();
+                return false;
+            }
+            return true;
         }
     </script>
 </head>
@@ -113,12 +135,14 @@
                 <div class="inner-box1">
                     <span>작성자: <input id="writer-input" value="<%=detailPost[0].postWriter %>" type="text"
                             disabled></span>
-                    <span>비밀번호: <input id="password-input" type="password" placeholder="4자리" maxlength="4"></span>
+                    <span>비밀번호: <input id="password-input" type="password" placeholder="비밀번호"></span>
                 </div>
                 <div class="inner-box2">
-                    <button id="delete-btn" onclick="deleteContent('<%=detailPost[0].postID %>')" type="button"
+                    <button id="delete-btn"
+                        onclick="deleteContent('<%=detailPost[0].postID %>', '<%= user.userPassword %>')" type="button"
                         class="btn btn-success delete-btn">삭제하기</button>
-                    <button id="modify-btn" onclick="modifyContent('<%=detailPost[0].postID %>')" type="button"
+                    <button id="modify-btn"
+                        onclick="modifyContent('<%=detailPost[0].postID %>', '<%= user.userPassword %>')" type="button"
                         class="btn btn-success modify-btn">수정완료</button>
                 </div>
             </div>

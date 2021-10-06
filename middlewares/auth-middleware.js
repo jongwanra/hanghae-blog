@@ -6,7 +6,6 @@ const SECRET_KEY = process.env.SECRET_KEY;
 module.exports = (req, res, next) => {
   // cookie-parser에서 token을 가져온다.
   const token = req.cookies.user;
-  console.log(token);
 
   // tokenType이 일치하지 않는 경우
   if (!token) {

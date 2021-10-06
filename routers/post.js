@@ -39,6 +39,7 @@ router.delete('/delete/:postID', authMiddleware, async (req, res) => {
 
     const detailPost = await Post.find({ postID: postID }, { _id: false });
     // DB에 저장된 비밀번호와 일치하지 않은 경우
+
     if (detailPost[0].postPassword != postPassword) {
       res.send({ msg: '비밀번호가 일치하지 않습니다.', result: false });
       return;

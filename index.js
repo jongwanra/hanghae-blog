@@ -24,6 +24,7 @@ try {
 const Post = require('./schemas/post_info');
 const Comment = require('./schemas/comment_info');
 const User = require('./schemas/user_info');
+const Like = require('./schemas/like_info');
 
 const PORT = process.env.PORT;
 
@@ -40,6 +41,9 @@ app.use('/api/comment', [commentRouter]);
 
 const userRouter = require('./routers/user');
 app.use('/api/user', [userRouter]);
+
+const likeRouter = require('./routers/like');
+app.use('/api/like', [likeRouter]);
 
 // view path와 확장자는 ejs로 설정
 app.set('views', __dirname + '/views');
@@ -83,11 +87,14 @@ app.get('/', async (req, res) => {
 
 // 글 작성 페이지로 이동하기.
 app.get('/write', authMiddleware, (req, res) => {
-  res.render('write_page');
+  console.log(res);
+  const user = res.locals.user;
+  res.render('write_page', { user });
 });
 
 // 게시글 조회 페이지로 이동하기
 app.get('/detail/:postID', async (req, res) => {
+  console.log(res);
   const { postID } = req.params;
 
   // 해당 포스트 내용 가져오기
@@ -131,9 +138,11 @@ app.get('/detail/:postID', async (req, res) => {
 
 // 게시글 수정 페이지로 이동하기
 app.get('/modify/:postID', authMiddleware, async (req, res) => {
+  const user = res.locals.user;
+
   const { postID } = req.params;
   const detailPost = await Post.find({ postID: postID }, { _id: false });
-  res.render('modify_page', { detailPost });
+  res.render('modify_page', { detailPost, user });
 });
 
 // 로그인 페이지로 이동하기

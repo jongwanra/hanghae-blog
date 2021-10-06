@@ -157,11 +157,14 @@
                         <li class="nav-item">
                             <a class="nav-link active" aria-current="page" href="/">돌아가기</a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link active" aria-current="page"
-                                onclick="checkAuth('/modify/<%=detailPost[0].postID %>'); return false;"
-                                href="">수정하기</a>
-                        </li>
+                        <!-- 로그인한 유저와 작성자가 같을 경우만 수정 가능하게 함 -->
+                        <% if(userNickname===detailPost[0].postWriter){ %>
+                            <li class="nav-item">
+                                <a class="nav-link active" aria-current="page"
+                                    onclick="checkAuth('/modify/<%=detailPost[0].postID %>'); return false;"
+                                    href="">수정하기</a>
+                            </li>
+                            <% } %>
                     </ul>
                 </div>
             </div>

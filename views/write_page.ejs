@@ -23,14 +23,23 @@
 
     <title>글 작성 페이지</title>
     <script>
-
-        function saveContents() {
+        // 글 추가 페이지
+        function saveContents(userPassword) {
             const title = $('#title-input').val();
             const content = $('#content-area').val();
             const writer = $('#writer-input').val();
             let password = $('#password-input').val();
 
-            if (isEmptyAll(title, content, writer, password)) {
+
+
+            if (isEmptyAll(title, content, password)) {
+                return;
+            }
+
+            // 해당 유저가 적은 비밀번호가 계정 비밀번호와 일치하지 않는 경우
+            if (password !== userPassword) {
+                alert("비밀번호가 일치하지 않습니다.");
+                $('#password-input').focus();
                 return;
             }
 
@@ -51,7 +60,7 @@
         }
 
         // 전부 작성한지 여부 확인
-        function isEmptyAll(title, content, writer, password) {
+        function isEmptyAll(title, content, password) {
             if (title == "") {
                 $('#title-input').focus();
                 alert("제목을 입력해 주세요.");
@@ -60,11 +69,6 @@
             if (content == "") {
                 alert("내용을 입력해 주세요.");
                 $('#content-area').focus();
-                return true;
-            }
-            if (writer == "") {
-                alert("작성자 이름을 입력해 주세요.")
-                $('#writer-input').focus();
                 return true;
             }
             if (password == "") {
@@ -105,9 +109,9 @@
                 <textarea spellcheck="false" type="text" id="content-area" placeholder="너의 이야기가 궁금해😍"></textarea>
             </div>
             <div class="save-box">
-                <span>작성자: <input id="writer-input" placeholder="작성자" type="text"></span>
-                <span>비밀번호: <input id="password-input" type="password" placeholder="4자리" maxlength="4"></span>
-                <button id="save-btn" onclick="saveContents()" type="button"
+                <span>작성자: <input id="writer-input" value="<%=user.userNickname%>" type="text" disabled></span>
+                <span>비밀번호: <input id="password-input" type="password" placeholder="비밀번호"></span>
+                <button id="save-btn" onclick="saveContents('<%=user.userPassword %>')" type="button"
                     class="btn btn-success save-btn">글쓰기</button>
             </div>
 

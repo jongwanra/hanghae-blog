@@ -53,6 +53,25 @@
 }
 
 a,
-a:link {
+a:link,
+a:focus,
+a:hover {
   color: black;
+}
+
+.like,
+.like:focus {
+  color: #28a745;
+  border: none;
+  outline: none;
+  background-color: white;
+}
+
+.like {
+  float: right;
+}
+
+.like-cnt {
+  font-size: 20px;
+  float: right;
 }

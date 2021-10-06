@@ -10,6 +10,8 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
         integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
     <link href="/main_page.css" rel="stylesheet">
+    <!-- 구글 . 좋아요 아이콘 -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
@@ -49,6 +51,68 @@
             }
         }
 
+        function toggleLikeBtn(idx, postID) {
+
+            // 쿠키가 존재하지 않을 경우, 내보내기
+            if (!document.cookie) {
+                alert("로그인이 필요한 기능입니다.");
+                window.location.href = "/login";
+                return;
+            }
+
+            const likeBtn = $(`#like-btn${idx}`).text();
+            // 좋아요 체크가 없는 경우
+            if (likeBtn === "favorite_border") {
+                $(`#like-btn${idx}`).text("favorite")
+                addLike(idx, postID);
+            }
+            // 좋아요가 체크 되어 있는 경우,
+            else {
+                $(`#like-btn${idx}`).text("favorite_border");
+                cancelLike(idx, postID);
+            }
+        }
+
+        function addLike(idx, postID) {
+            const likeCnt = $(`#like-cnt${idx}`).text();
+            $(`#like-cnt${idx}`).text(Number(likeCnt) + 1);
+
+            $.ajax({
+                type: "post",
+                url: `/api/like/${postID}`,
+                data: {
+                },
+                success: function (response) {
+                    console.log("add: success");
+                },
+                error: function (error) {
+                    console.log("error");
+                    alert(error.responseJSON.errorMessage);
+                    window.location.href = "/login";
+                }
+            });
+
+        }
+
+        function cancelLike(idx, postID) {
+            const likeCnt = $(`#like-cnt${idx}`).text();
+            $(`#like-cnt${idx}`).text(Number(likeCnt) - 1);
+
+            $.ajax({
+                type: "delete",
+                url: `/api/like/${postID}`,
+                data: {
+                },
+                success: function (response) {
+                    console.log("delete:, success");
+                },
+                error: function (error) {
+                    console.log("error");
+                    alert(error.responseJSON.errorMessage);
+                    window.location.href = "/login";
+                }
+            });
+        }
     </script>
 </head>
 
@@ -98,6 +162,12 @@
                     <div class="sub-box">
                         <span class="sub-content">작성일: <%=posts[i].postDate %> / </span>
                         <span class="sub-content">작성자: <%=posts[i].postWriter %></span>
+                        <span id="like-cnt<%=i%>" class="like-cnt">
+                            <%=posts[i].postLikeCnt%>
+                        </span>
+                        <button id="like-btn<%=i%>" onclick="toggleLikeBtn(<%=i%>, '<%= posts[i].postID %>')"
+                            class="material-icons like">favorite_border</button>
+
                     </div>
                 </div>
                 <% } %>

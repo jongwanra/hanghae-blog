@@ -6,7 +6,7 @@ const path = require('path');
 const authMiddleware = require('./middlewares/auth-middleware');
 const SECRET_KEY = process.env.SECRET_KEY;
 const HOST = process.env.HOST;
-const USER = process.env.USER;
+const USER_ID = process.env.USER_ID;
 const PASSWORD = process.env.PASSWORD;
 const DATABASE = process.env.DATABASE;
 const jwt = require('jsonwebtoken');
@@ -15,7 +15,7 @@ require('dotenv').config();
 //mongo db connect
 try {
   mongoose.connect(
-    `mongodb://${USER}:${PASSWORD}@${HOST}:27017/${DATABASE}?authSource=admin`
+    `mongodb://${USER_ID}:${PASSWORD}@${HOST}:27017/${DATABASE}?authSource=admin`
   );
 } catch (error) {
   console.log('mongo connect error : ', error);

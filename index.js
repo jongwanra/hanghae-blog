@@ -46,14 +46,39 @@ app.get('/', async (req, res) => {
   // 작성순으로 내림차순 정렬
   try {
     const posts = await Post.find({}).sort({ _id: -1 });
-    res.render('main_page', { posts });
+
+    // 로그인한 유저 정보 가져오기
+    const token = req.cookies.user;
+
+    // 로그인 하지 않은 유저일 경우
+    if (!token) {
+      return res.render('main_page', {
+        posts,
+        userNickname: undefined,
+      });
+    }
+
+    //token에서 userID 가져오기
+    const { userID } = jwt.verify(token, SECRET_KEY);
+    try {
+      const user = await User.findOne({ userID: userID }, { _id: false });
+      return res.render('main_page', {
+        posts,
+        userNickname: user.userNickname,
+      });
+    } catch (error) {
+      return res.render('main_page', {
+        posts,
+        userNickname: undefined,
+      });
+    }
   } catch (err) {
     console.log(err);
   }
 });
 
+// 글 작성 페이지로 이동하기.
 app.get('/write', authMiddleware, (req, res) => {
-  console.log(res.locals.user);
   res.render('write_page');
 });
 
@@ -68,7 +93,7 @@ app.get('/detail/:postID', async (req, res) => {
   const detailComment = await Comment.find(
     { postID: postID },
     { _id: false }
-  ).sort({ commentID: -1 });
+  ).sort({ _id: -1 });
 
   // 로그인한 유저 정보 가져오기
   const token = req.cookies.user;
@@ -116,15 +141,8 @@ app.get('/login', (req, res) => {
 app.get('/register', (req, res) => {
   res.render('signup_page');
 });
+
 // 해당포트로 서버와 연결하기
 app.listen(PORT, () => {
   console.log(`listening at http://localhost:${PORT}`);
 });
-
-/*
-
-각자 두곳에서 socket file
-app.js 에서 io 선언한 부분을 지워서 확인해보자
-app.js에 있는 ㄷ텍ㄷㄴㄴfmf express 바인딩이 두번되고 있다.
-
-*/

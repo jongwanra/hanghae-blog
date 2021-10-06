@@ -9,7 +9,7 @@
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
         integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-
+    <link href="/main_page.css" rel="stylesheet">
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
@@ -21,66 +21,6 @@
         crossorigin="anonymous"></script>
 
     <title>메인 페이지</title>
-
-    <style>
-        * {
-            font-family: "Apple SD Gothic Neo", "Nanum Barun Gothic", "Nanum Gothic", Verdana, Arial, "Malgun Gothic", Dotum, sans-serif;
-        }
-
-        .container {
-            width: 70%;
-            height: 700px;
-        }
-
-        .footer-box {
-            width: 100%;
-            height: 50px;
-            background-color: yellow;
-        }
-
-        .title {
-            display: incline;
-        }
-
-        .empty-box {
-            width: 100%;
-            height: 20px;
-        }
-
-        .card-box {
-            width: 100%;
-            height: 150px;
-            margin: 0 auto 20px auto;
-            background-color: white;
-            border-radius: 6px;
-            box-shadow: 0 0.5em 1em -0.125em rgb(10 10 10 / 10%), 0 0 0 1px rgb(10 10 10 / 2%);
-        }
-
-        .title-box {
-            padding-top: 10px;
-            width: 95%;
-            margin: auto;
-            height: 70%;
-            border-bottom: 1px solid #eaecef;
-            ;
-        }
-
-        .sub-box {
-            width: 95%;
-            margin: auto;
-            padding-top: 10px;
-            height: 20%;
-        }
-
-        .sub-content {
-            color: rgb(134, 142, 150)
-        }
-
-        a,
-        a:link {
-            color: black;
-        }
-    </style>
     <script>
 
         $(document).ready(() => {
@@ -90,10 +30,12 @@
                 $("#toggle-login-logout").attr("href", '/api/user/logout');
                 $("#toggle-login-logout").text("로그아웃");
                 $("#toggle-signup").hide();
+                $("#welcome-text").show();
             } else {
                 $("#toggle-login-logout").attr("href", '/login');
                 $("#toggle-login-logout").text("로그인");
                 $("#toggle-signup").show();
+                $("#welcome-text").hide();
             }
         })
 
@@ -132,6 +74,11 @@
                         </li>
                         <li class="nav-item">
                             <a class="nav-link active" id="toggle-signup" aria-current="page" href="/register">회원가입</a>
+                        </li>
+                        <li class="nav-item">
+                            <span id="welcome-text" class="nav-link active">
+                                <%=userNickname%>님, 환영합니다.
+                            </span>
                         </li>
                     </ul>
                 </div>

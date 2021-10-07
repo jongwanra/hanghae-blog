@@ -130,23 +130,33 @@ app.get('/detail/:postID', async (req, res) => {
       detailPost,
       detailComment,
       userNickname: undefined,
+      postIDs: [],
     });
   }
   // 로그인 한 유저일 경우(로그인한 유저만 자기 자신의 댓글을 지울 수 있음.)
   const { userID } = jwt.verify(token, SECRET_KEY);
   try {
     const user = await User.findOne({ userID: userID }, { _id: false });
+    const userPressedLike = await Like.find({ userID: userID }, { _id: false });
+
+    // 로그인 한 유저의 좋아요 누른 postID를 가져온다.
+    const postIDs = userPressedLike.reduce((acc, value) => {
+      acc.push(value.postID);
+      return acc;
+    }, []);
 
     return res.render('detail_page', {
       detailPost,
       detailComment,
       userNickname: user.userNickname,
+      postIDs: postIDs,
     });
   } catch (error) {
     return res.render('detail_page', {
       detailPost,
       detailComment,
       userNickname: undefined,
+      postIDs: [],
     });
   }
 });

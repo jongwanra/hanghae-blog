@@ -166,3 +166,20 @@ input:focus,
   margin-bottom: 3%;
   text-align: right;
 }
+
+.like,
+.like:focus {
+  color: #28a745;
+  border: none;
+  outline: none;
+  background-color: white;
+}
+
+.like {
+  float: right;
+}
+
+.like-cnt {
+  font-size: 20px;
+  float: right;
+}

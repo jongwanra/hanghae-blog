@@ -63,6 +63,8 @@ app.get('/', async (req, res) => {
       return res.render('main_page', {
         posts,
         userNickname: undefined,
+        userID: undefined,
+        postIDs: [],
       });
     }
 
@@ -70,14 +72,29 @@ app.get('/', async (req, res) => {
     const { userID } = jwt.verify(token, SECRET_KEY);
     try {
       const user = await User.findOne({ userID: userID }, { _id: false });
+      const userPressedLike = await Like.find(
+        { userID: userID },
+        { _id: false }
+      );
+
+      // 로그인 한 유저의 좋아요 누른 postID를 가져온다.
+      const postIDs = userPressedLike.reduce((acc, value) => {
+        acc.push(value.postID);
+        return acc;
+      }, []);
+
       return res.render('main_page', {
         posts,
         userNickname: user.userNickname,
+        userID: user.userID,
+        postIDs: postIDs,
       });
     } catch (error) {
       return res.render('main_page', {
         posts,
         userNickname: undefined,
+        userID: undefined,
+        postIDs: [],
       });
     }
   } catch (err) {
@@ -87,14 +104,12 @@ app.get('/', async (req, res) => {
 
 // 글 작성 페이지로 이동하기.
 app.get('/write', authMiddleware, (req, res) => {
-  console.log(res);
   const user = res.locals.user;
   res.render('write_page', { user });
 });
 
 // 게시글 조회 페이지로 이동하기
 app.get('/detail/:postID', async (req, res) => {
-  console.log(res);
   const { postID } = req.params;
 
   // 해당 포스트 내용 가져오기

@@ -23,7 +23,7 @@ router.post('/:postID', authMiddleware, async (req, res) => {
       { postID: postID },
       { $set: { postLikeCnt: updatedLikeCnt } }
     );
-    res.status(201).send({});
+    res.status(201).send({ updatedLikeCnt: updatedLikeCnt });
   } catch (error) {
     console.log(error);
   }
@@ -48,7 +48,7 @@ router.delete('/:postID', authMiddleware, async (req, res) => {
       { postID: postID },
       { $set: { postLikeCnt: updatedLikeCnt } }
     );
-    res.status(201).send({});
+    res.status(201).send({ updatedLikeCnt: updatedLikeCnt });
   } catch (error) {
     console.log(error);
   }

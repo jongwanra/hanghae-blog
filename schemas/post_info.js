@@ -5,7 +5,7 @@ const postSchema = new Schema({
   postID: {
     type: String,
     required: true,
-    unique: true,
+    unique: false,
   },
   postTitle: {
     type: String,

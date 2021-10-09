@@ -5,7 +5,7 @@ const authMiddleware = require('../middlewares/auth-middleware');
 const router = express.Router();
 
 // 작성한 글 추가하기
-router.post('/add/content', authMiddleware, async (req, res) => {
+router.post('/content', authMiddleware, async (req, res) => {
   try {
     const { postTitle, postWriter, postContent, postPassword } = req.body;
 
@@ -32,7 +32,7 @@ router.post('/add/content', authMiddleware, async (req, res) => {
   }
 });
 // 게시글 삭제하기
-router.delete('/delete/:postID', authMiddleware, async (req, res) => {
+router.delete('/content/:postID', authMiddleware, async (req, res) => {
   try {
     const { postID } = req.params;
     const { postPassword } = req.body;
@@ -52,7 +52,7 @@ router.delete('/delete/:postID', authMiddleware, async (req, res) => {
 });
 
 // 게시글 수정하기
-router.put('/modify/:postID', authMiddleware, async (req, res) => {
+router.put('/content/:postID', authMiddleware, async (req, res) => {
   try {
     const { postID } = req.params;
     const { postTitle, postContent, postPassword } = req.body;

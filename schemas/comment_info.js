@@ -10,7 +10,7 @@ const commentSchema = new Schema({
   commentID: {
     type: String,
     required: true,
-    unique: true,
+    unique: false,
   },
 
   commentContent: {

@@ -18,8 +18,9 @@ module.exports = (req, res, next) => {
   // 해당 user 권한을 확인한다.
 
   const { userID } = jwt.verify(token, SECRET_KEY);
-
-  User.findOne({ userID: userID }, { _id: false })
+  const tmp = User.findOne({ userID: userID }, { _id: false });
+  console.log(tmp);
+  tmp
     .then((user) => {
       res.locals.user = user;
       next();

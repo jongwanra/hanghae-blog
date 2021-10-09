@@ -1,16 +1,52 @@
+require('dotenv').config();
 const express = require('express');
+const app = express();
 const cookieParser = require('cookie-parser');
 const mongoose = require('mongoose');
-const app = express();
-const path = require('path');
 const authMiddleware = require('./middlewares/auth-middleware');
 const SECRET_KEY = process.env.SECRET_KEY;
 const HOST = process.env.HOST;
 const USER_ID = process.env.USER_ID;
 const PASSWORD = process.env.PASSWORD;
 const DATABASE = process.env.DATABASE;
+const PORT = process.env.PORT;
 const jwt = require('jsonwebtoken');
-require('dotenv').config();
+
+// swagger
+const swaggerUi = require('swagger-ui-express');
+const swaggerJSDoc = require('swagger-jsdoc');
+
+// swagger
+const swaggerDefinition = {
+  info: {
+    title: "Jongwan's Blog API",
+    version: '1.0.0',
+    description: "Jongwan's Blog API",
+  },
+  host: 'localhost:3000',
+  basePath: '/',
+  securityDefinitions: {
+    bearerAuth: {
+      type: 'apiKey',
+      name: 'Authorization',
+      scheme: 'bearer',
+      in: 'header',
+    },
+  },
+};
+
+const options = {
+  swaggerDefinition,
+  apis: ['./swagger/*.js'],
+};
+
+const swaggerSpec = swaggerJSDoc(options);
+app.get('/swagger.json', (req, res) => {
+  res.setHeader('content-Type', 'application/json');
+  res.send(swaggerSpec);
+});
+
+// swagger
 
 //mongo db connect
 try {
@@ -21,29 +57,22 @@ try {
   console.log('mongo connect error : ', error);
 }
 
-const Post = require('./schemas/post_info');
 const Comment = require('./schemas/comment_info');
 const User = require('./schemas/user_info');
 const Like = require('./schemas/like_info');
+const Post = require('./schemas/post_info');
 
-const PORT = process.env.PORT;
-
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 app.use(cookieParser());
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
+// css, javascript 파일과 같은 정적 파일을 제공하기 위한 미들웨어 함수
 app.use(express.static('public'));
 
-const postRouter = require('./routers/post');
-app.use('/api/post', [postRouter]);
-
-const commentRouter = require('./routers/comment');
-app.use('/api/comment', [commentRouter]);
-
-const userRouter = require('./routers/user');
-app.use('/api/user', [userRouter]);
-
-const likeRouter = require('./routers/like');
-app.use('/api/like', [likeRouter]);
+app.use('/api/post', [require('./routers/post')]);
+app.use('/api/comment', [require('./routers/comment')]);
+app.use('/api/user', [require('./routers/user')]);
+app.use('/api/like', [require('./routers/like')]);
 
 // view path와 확장자는 ejs로 설정
 app.set('views', __dirname + '/views');

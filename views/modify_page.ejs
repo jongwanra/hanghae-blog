@@ -40,7 +40,7 @@
 
             $.ajax({
                 type: "DELETE",
-                url: `/api/post/delete/${postID}`,
+                url: `/api/post/${postID}`,
                 data: {
                     postPassword: postPassword
                 },
@@ -74,7 +74,7 @@
 
             $.ajax({
                 type: "PUT",
-                url: `/api/post/modify/${postID}`,
+                url: `/api/post/${postID}`,
                 data: {
                     postTitle: postTitle,
                     postContent: postContent,
@@ -119,7 +119,6 @@
                         <li class="nav-item">
                             <a class="nav-link active" aria-current="page" href="/">돌아가기</a>
                         </li>
-
                     </ul>
                 </div>
             </div>
